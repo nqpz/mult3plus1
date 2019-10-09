@@ -1,0 +1,39 @@
+name:                mult3plus1
+version:             0.1.0.0
+github:              "nqpz/mult3plus1"
+license:             WTFPL
+author:              "Niels G. W. Serup"
+maintainer:          "ngws@metanohi.name"
+copyright:           "Copyright (c) 2019 Niels G. W. Serup"
+
+extra-source-files:
+- README.md
+
+synopsis:            An attempt at solving the Collatz conjecture
+
+description:         Please see the README on GitHub at <https://github.com/nqpz/mult3plus1#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- containers >= 0.5
+- mtl
+- MissingH >= 1.3
+- random
+- random-fu
+- MonadRandom
+- random-shuffle
+
+library:
+  source-dirs: src
+
+executables:
+  mult3plus1-collatz:
+    main:                collatz.hs
+    source-dirs:         src
+    dependencies:
+    - mult3plus1
+  mult3plus1-cycle:
+    main:                cycle.hs
+    source-dirs:         src
+    dependencies:
+    - mult3plus1
