@@ -73,11 +73,11 @@ searchStep (Cur m ts) = Cur m' ts'
                                         . (+ k) . (* kmod)) is
                        in findSmallestMods is' 0 1 k kmod
                     ) ts
-  
+
         findSmallestMods is offset scale k kmod
           | all (\j -> j `elem` is) tests = [(k, kmod)]
           | all (\j -> j `notElem` is) tests = []
-          | otherwise = 
+          | otherwise =
               let kmod' = kmod * 2
                   scale' = scale * 2
               in findSmallestMods is offset scale' k kmod' ++
@@ -100,7 +100,7 @@ main :: IO ()
 main = do
   args <- getArgs
   case args of
-    [depth] -> do 
+    [depth] -> do
       let s = search (read depth)
       print $ length $ curTests s
       print $ curRatio' s
