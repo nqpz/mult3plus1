@@ -25,14 +25,6 @@ class CollatzIntegral a where
 isDivisibleBy2 :: Rational -> Bool
 isDivisibleBy2 x = denominator (x / 2) == 1
 
-instance CollatzIntegral Rational where
-  divi2 a
-    | isDivisibleBy2 a = CanDivide (a / 2)
-    | otherwise = CannotDivide
-  mult = (*)
-  plus = (+)
-  ge = (>=)
-
 data IntegerMod = IntegerMod { modPart :: Rational
                              , intPart :: Rational
                              }
