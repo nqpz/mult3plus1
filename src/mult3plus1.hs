@@ -1,7 +1,9 @@
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE TypeSynonymInstances #-}
 module Main where
 
 import Data.Maybe (maybe, fromMaybe, catMaybes)
-import Data.Ratio ((%))
+import Data.Ratio ((%), denominator)
 import System.Environment (getArgs)
 
 
@@ -16,33 +18,36 @@ data Div2Result a = CanDivide a
 
 class CollatzIntegral a where
   divi2 :: a -> Div2Result a
-  mult :: a -> Integer -> a
-  plus :: a -> Integer -> a
+  mult :: a -> Rational -> a
+  plus :: a -> Rational -> a
   ge :: a -> a -> Bool
 
-instance CollatzIntegral Integer where
+isDivisibleBy2 :: Rational -> Bool
+isDivisibleBy2 x = denominator (x / 2) == 1
+
+instance CollatzIntegral Rational where
   divi2 a
-    | a `mod` 2 == 0 = CanDivide (a `div` 2)
+    | isDivisibleBy2 a = CanDivide (a / 2)
     | otherwise = CannotDivide
   mult = (*)
   plus = (+)
   ge = (>=)
 
-data IntegerMod = IntegerMod { modPart :: Integer
-                             , intPart :: Integer
+data IntegerMod = IntegerMod { modPart :: Rational
+                             , intPart :: Rational
                              }
   deriving (Show)
 
 instance CollatzIntegral IntegerMod where
   divi2 (IntegerMod m i) =
-    if m `mod` 2 == 0
+    if isDivisibleBy2 m
     then
       if iEven
       then
         -- (2 * a) * n + (2 * b)
         --
         -- Trivial to divide by 2.
-        CanDivide $ IntegerMod (m `div` 2) (i `div` 2)
+        CanDivide $ IntegerMod (m / 2) (i / 2)
       else
         -- (2 * a) * n + (2 * b + 1)
         --
@@ -62,7 +67,7 @@ instance CollatzIntegral IntegerMod where
       --
       --   Is divisible by 2 if n is odd.
       Uncertain
-    where iEven = i `mod` 2 == 0
+    where iEven = isDivisibleBy2 i
 
   mult (IntegerMod m i) k = IntegerMod (m * k) (i * k)
   plus (IntegerMod m i) k = IntegerMod m (i + k)
@@ -102,8 +107,8 @@ searchStep (Cur m ts) = Cur m' ts'
                                                Nothing -> Just i
                                                _ -> Nothing
                                            ) is
-                                 $ map (stepsUntilSmaller . IntegerMod m'
-                                        . (+ k) . (* kmod)) is
+                                 $ map (stepsUntilSmaller . IntegerMod (fromIntegral m')
+                                        . fromIntegral . (+ k) . (* kmod)) is
                        in findSmallestMods is' 0 1 k kmod
                     ) ts
 
