@@ -1,7 +1,14 @@
 # mult3plus1
 
-I tried to solve [the Collatz
-conjecture](https://en.wikipedia.org/wiki/Collatz_conjecture) in July
-2019 by programming my way out of it, but I didn't really succeed.
+Try running `stack install` and then `mult3plus1 N`, where N is a
+positive integer.  This program will try to find the fraction of all
+positive integers modulo N that are guaranteed to become smaller when
+run through the calculation of the [the Collatz
+conjecture](https://en.wikipedia.org/wiki/Collatz_conjecture).
 
-Try running `stack install` and then `mult3plus1 <integer>`.
+
+## Background
+
+I tried to prove the conjecture in July 2019 by programming my way out
+of it, but I didn't succeed.
+
