@@ -31,27 +31,35 @@ data IntegerMod = IntegerMod { modPart :: Integer
 
 instance CollatzIntegral IntegerMod where
   divi2 (IntegerMod m i) =
-    case (m `mod` 2 == 0, i `mod` 2 == 0) of
-      (True, True) ->
-        -- (2 * a) * n + (2 * b)
-        --
-        -- Trivial to divide by 2.
-        Just $ Just $ IntegerMod (m `div` 2) (i `div` 2)
-      (True, False) ->
-        -- (2 * a) * n + (2 * b + 1)
-        --
-        -- Guaranteed to never divide by 2, no matter the value of a or b.
-        Just Nothing
-      (False, False) ->
-        -- (2 * a + 1) * n + (2 * b + 1)
-        --
-        -- Is divisible by 2 if n is odd.
-        Nothing
-      (False, True) ->
-        -- (2 * a + 1) * n + (2 * b)
-        --
-        -- Is divisible by 2 if n is even.
-        Nothing
+    if m `mod` 2 == 0
+    then
+      Just $ if iEven
+             then
+               -- (2 * a) * n + (2 * b)
+               --
+               -- Trivial to divide by 2.
+               Just $ IntegerMod (m `div` 2) (i `div` 2)
+             else
+               -- (2 * a) * n + (2 * b + 1)
+               --
+               -- Guaranteed to never divide by 2, no matter the value of a
+               -- or b.
+               Nothing
+    else
+      -- If iEven:
+      --
+      --   (2 * a + 1) * n + (2 * b)
+      --
+      --   Is divisible by 2 if n is even.
+      --
+      -- If not iEven:
+      --
+      --   (2 * a + 1) * n + (2 * b + 1)
+      --
+      --   Is divisible by 2 if n is odd.
+      Nothing
+    where iEven = i `mod` 2 == 0
+
   mult (IntegerMod m i) k = IntegerMod (m * k) (i * k)
   plus (IntegerMod m i) k = IntegerMod m (i + k)
   ge (IntegerMod m1 i1) (IntegerMod m2 i2) = m1 > m2 || (m1 == m2 && i1 >= i2)
