@@ -13,7 +13,6 @@ module M3P1.Random (
   CMR.mkStdGen,
   RandomM,
   RandomMT,
-  randomSt,
   randomR,
   weightedChoice,
   weightedChoiceMay,
@@ -31,10 +30,6 @@ import Data.Word (Word64)
 
 type RandomM = CMR.Rand CMR.StdGen
 type RandomMT m = CMR.RandT CMR.StdGen m
-
--- | Makes a function that returns a DR.RVar usable by e.g. CMR.Rand.
-randomSt :: forall m a . CMR.MonadRandom m => DR.RVar a -> m a
-randomSt rvar = DR.runRVar rvar (CMR.getRandom :: m Word64)
 
 -- | Random number in range @a..b@.
 randomR :: (CMR.Random a, CMR.MonadRandom m) => a -> a -> m a
