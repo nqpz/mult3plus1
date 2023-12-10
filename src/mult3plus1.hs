@@ -33,17 +33,25 @@ instance CollatzIntegral IntegerMod where
   divi2 (IntegerMod m i) =
     case (m `mod` 2 == 0, i `mod` 2 == 0) of
       (True, True) ->
-        -- 2 * a + 2 * b: Trivial to divide by 2
+        -- (2 * a) * n + (2 * b)
+        --
+        -- Trivial to divide by 2.
         Just $ Just $ IntegerMod (m `div` 2) (i `div` 2)
-      (False, True) ->
-        -- l * a + 2 * b: Not trivial to divide the first part by 2
-        Nothing
       (True, False) ->
-        -- 2 * a + l * b: Not trivial to divide the second part by 2
+        -- (2 * a) * n + (2 * b + 1)
+        --
+        -- Guaranteed to never divide by 2, no matter the value of a or b.
         Just Nothing
       (False, False) ->
-        -- l * a + m * b: Not trivial to divide any part by 2
+        -- (2 * a + 1) * n + (2 * b + 1)
+        --
+        -- Is divisible by 2 if n is odd.
         Just Nothing
+      (False, True) ->
+        -- (2 * a + 1) * n + (2 * b)
+        --
+        -- Is divisible by 2 if n is even.
+        Nothing
   mult (IntegerMod m i) k = IntegerMod (m * k) (i * k)
   plus (IntegerMod m i) k = IntegerMod m (i + k)
   ge (IntegerMod m1 i1) (IntegerMod m2 i2) = m1 > m2 || (m1 == m2 && i1 >= i2)
