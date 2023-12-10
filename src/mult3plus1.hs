@@ -17,6 +17,8 @@ isDivisibleBy2 x = denominator (x / 2) == 1
 
 data Div2Result a = CanDivide a
                   | CannotDivide
+                  | OneOf (Div2Result a) (Div2Result a)
+                    -- ^ either one could be the result
                   | Uncertain
 
 class CollatzIntegral a where
@@ -39,7 +41,7 @@ instance CollatzIntegral IntegerMod where
         -- (2 * a) * n + (2 * b)
         --
         -- Trivial to divide by 2.
-        CanDivide $ IntegerMod (m / 2) (i / 2)
+        canDivide
       else
         -- (2 * a) * n + (2 * b + 1)
         --
@@ -58,8 +60,11 @@ instance CollatzIntegral IntegerMod where
       --   (2 * a + 1) * n + (2 * b + 1)
       --
       --   Is divisible by 2 if n is odd.
-      Uncertain
+      --
+      -- Try both cases and check if they both result in a smaller integer.
+      OneOf canDivide CannotDivide
     where iEven = isDivisibleBy2 i
+          canDivide = CanDivide $ IntegerMod (m / 2) (i / 2)
 
   mult (IntegerMod m i) k =
     IntegerMod (m * k) (i * k)
@@ -74,6 +79,7 @@ handleDiv2Result :: CollatzIntegral i => Div2Result i -> Maybe (Maybe i)
 handleDiv2Result = \case
   CanDivide a -> Just $ Just a
   CannotDivide -> Just Nothing
+  OneOf a b -> Nothing -- FIXME: Handle this case
   Uncertain -> Nothing
 
 step :: CollatzIntegral i => i -> Maybe i
