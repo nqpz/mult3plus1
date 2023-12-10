@@ -2,8 +2,8 @@
 
 Try running `stack install` and then `mult3plus1 N`, where N is a
 positive integer.  This program will try to find the fraction of all
-positive integers modulo N that are guaranteed to become smaller when
-run through the calculation of the [the Collatz
+positive integers modulo $2^(N+1)$ that are guaranteed to become smaller
+when run through the calculation of the [the Collatz
 conjecture](https://en.wikipedia.org/wiki/Collatz_conjecture).
 
 
