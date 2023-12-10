@@ -10,16 +10,20 @@ takeWhileIncl f (x : xs) | f x = x : takeWhileIncl f xs
                          | otherwise = [x]
 takeWhileIncl _ [] = []
 
+data Div2Result a = CanDivide a
+                  | CannotDivide
+                  | Uncertain
+
 class CollatzIntegral a where
-  divi2 :: a -> Maybe (Maybe a)
+  divi2 :: a -> Div2Result a
   mult :: a -> Integer -> a
   plus :: a -> Integer -> a
   ge :: a -> a -> Bool
 
 instance CollatzIntegral Integer where
   divi2 a
-    | a `mod` 2 == 0 = Just $ Just (a `div` 2)
-    | otherwise = Just Nothing
+    | a `mod` 2 == 0 = CanDivide (a `div` 2)
+    | otherwise = CannotDivide
   mult = (*)
   plus = (+)
   ge = (>=)
@@ -33,18 +37,18 @@ instance CollatzIntegral IntegerMod where
   divi2 (IntegerMod m i) =
     if m `mod` 2 == 0
     then
-      Just $ if iEven
-             then
-               -- (2 * a) * n + (2 * b)
-               --
-               -- Trivial to divide by 2.
-               Just $ IntegerMod (m `div` 2) (i `div` 2)
-             else
-               -- (2 * a) * n + (2 * b + 1)
-               --
-               -- Guaranteed to never divide by 2, no matter the value of a
-               -- or b.
-               Nothing
+      if iEven
+      then
+        -- (2 * a) * n + (2 * b)
+        --
+        -- Trivial to divide by 2.
+        CanDivide $ IntegerMod (m `div` 2) (i `div` 2)
+      else
+        -- (2 * a) * n + (2 * b + 1)
+        --
+        -- Guaranteed to never divide by 2, no matter the value of a
+        -- or b.
+        CannotDivide
     else
       -- If iEven:
       --
@@ -57,15 +61,20 @@ instance CollatzIntegral IntegerMod where
       --   (2 * a + 1) * n + (2 * b + 1)
       --
       --   Is divisible by 2 if n is odd.
-      Nothing
+      Uncertain
     where iEven = i `mod` 2 == 0
 
   mult (IntegerMod m i) k = IntegerMod (m * k) (i * k)
   plus (IntegerMod m i) k = IntegerMod m (i + k)
   ge (IntegerMod m1 i1) (IntegerMod m2 i2) = m1 > m2 || (m1 == m2 && i1 >= i2)
 
+handleDiv2Result :: CollatzIntegral i => Div2Result i -> Maybe (Maybe i)
+handleDiv2Result (CanDivide a) = Just $ Just a
+handleDiv2Result CannotDivide = Just Nothing
+handleDiv2Result Uncertain = Nothing
+
 step :: CollatzIntegral i => i -> Maybe i
-step n = fmap (fromMaybe ((n `mult` 3) `plus` 1)) (divi2 n)
+step n = fmap (fromMaybe ((n `mult` 3) `plus` 1)) (handleDiv2Result $ divi2 n)
 
 stepsUntilSmaller :: CollatzIntegral i => i -> Maybe Integer
 stepsUntilSmaller n =
