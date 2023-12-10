@@ -46,7 +46,7 @@ instance CollatzIntegral IntegerMod where
         -- (2 * a + 1) * n + (2 * b + 1)
         --
         -- Is divisible by 2 if n is odd.
-        Just Nothing
+        Nothing
       (False, True) ->
         -- (2 * a + 1) * n + (2 * b)
         --
