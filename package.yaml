@@ -23,8 +23,8 @@ library:
   source-dirs: src
 
 executables:
-  mult3plus1-collatz:
-    main:                collatz.hs
+  mult3plus1:
+    main:                mult3plus1.hs
     source-dirs:         src
     dependencies:
     - mult3plus1
