@@ -33,9 +33,17 @@ instance CollatzIntegral IntegerMod where
   divi (IntegerMod m i) k =
     case (m `mod` k == 0, i `mod` k == 0) of
       (True, True) ->
+        -- k * a + k * b: Trivial to divide by k
         Just $ Just $ IntegerMod (m `div` k) (i `div` k)
-      (False, True) -> Nothing -- we cannot be sure, so be conservative
-      _ -> Just Nothing
+      (False, True) ->
+        -- l * a + k * b: Not trivial to divide the first part by k
+        Nothing
+      (True, False) ->
+        -- k * a + l * b: Not trivial to divide the second part by k
+        Just Nothing
+      (False, False) ->
+        -- l * a + m * b: Not trivial to divide any part by k
+        Just Nothing
   mult (IntegerMod m i) k = IntegerMod (m * k) (i * k)
   plus (IntegerMod m i) k = IntegerMod m (i + k)
   ge (IntegerMod m1 i1) (IntegerMod m2 i2) = m1 > m2 || (m1 == m2 && i1 >= i2)
