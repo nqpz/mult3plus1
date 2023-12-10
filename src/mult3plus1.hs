@@ -11,14 +11,14 @@ takeWhileIncl f (x : xs) | f x = x : takeWhileIncl f xs
 takeWhileIncl _ [] = []
 
 class CollatzIntegral a where
-  divi :: a -> Integer -> Maybe (Maybe a)
+  divi2 :: a -> Maybe (Maybe a)
   mult :: a -> Integer -> a
   plus :: a -> Integer -> a
   ge :: a -> a -> Bool
 
 instance CollatzIntegral Integer where
-  divi a k
-    | a `mod` k == 0 = Just $ Just (a `div` k)
+  divi2 a
+    | a `mod` 2 == 0 = Just $ Just (a `div` 2)
     | otherwise = Just Nothing
   mult = (*)
   plus = (+)
@@ -30,26 +30,26 @@ data IntegerMod = IntegerMod { modPart :: Integer
   deriving (Show)
 
 instance CollatzIntegral IntegerMod where
-  divi (IntegerMod m i) k =
-    case (m `mod` k == 0, i `mod` k == 0) of
+  divi2 (IntegerMod m i) =
+    case (m `mod` 2 == 0, i `mod` 2 == 0) of
       (True, True) ->
-        -- k * a + k * b: Trivial to divide by k
-        Just $ Just $ IntegerMod (m `div` k) (i `div` k)
+        -- 2 * a + 2 * b: Trivial to divide by 2
+        Just $ Just $ IntegerMod (m `div` 2) (i `div` 2)
       (False, True) ->
-        -- l * a + k * b: Not trivial to divide the first part by k
+        -- l * a + 2 * b: Not trivial to divide the first part by 2
         Nothing
       (True, False) ->
-        -- k * a + l * b: Not trivial to divide the second part by k
+        -- 2 * a + l * b: Not trivial to divide the second part by 2
         Just Nothing
       (False, False) ->
-        -- l * a + m * b: Not trivial to divide any part by k
+        -- l * a + m * b: Not trivial to divide any part by 2
         Just Nothing
   mult (IntegerMod m i) k = IntegerMod (m * k) (i * k)
   plus (IntegerMod m i) k = IntegerMod m (i + k)
   ge (IntegerMod m1 i1) (IntegerMod m2 i2) = m1 > m2 || (m1 == m2 && i1 >= i2)
 
 step :: CollatzIntegral i => i -> Maybe i
-step n = fmap (fromMaybe ((n `mult` 3) `plus` 1)) (n `divi` 2)
+step n = fmap (fromMaybe ((n `mult` 3) `plus` 1)) (divi2 n)
 
 stepsUntilSmaller :: CollatzIntegral i => i -> Maybe Integer
 stepsUntilSmaller n =
