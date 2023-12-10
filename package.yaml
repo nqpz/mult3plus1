@@ -18,10 +18,6 @@ dependencies:
 - containers >= 0.5
 - mtl
 - MissingH >= 1.3
-- random
-- random-fu
-- MonadRandom
-- random-shuffle
 
 library:
   source-dirs: src
@@ -29,11 +25,6 @@ library:
 executables:
   mult3plus1-collatz:
     main:                collatz.hs
-    source-dirs:         src
-    dependencies:
-    - mult3plus1
-  mult3plus1-cycle:
-    main:                cycle.hs
     source-dirs:         src
     dependencies:
     - mult3plus1
