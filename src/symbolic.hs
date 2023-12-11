@@ -124,12 +124,34 @@ printTree t depth = mapM_ putStrLn $ printTreeLines t depth
              : status
              : map ("  " ++) struct
 
+printShape :: Tree -> Integer -> IO ()
+printShape t depth = printShape' t 0
+  where printShape' :: Tree -> Integer -> IO ()
+        printShape' t indent
+          | indent == depth = putStrLn "-"
+          | otherwise =
+            let indent' = indent + 1
+            in case treeStruct t of
+                 Success s -> putStrLn "|"
+                 IsOdd t' -> do
+                   putStr " "
+                   printShape' t' indent'
+                 IsEven t' -> do
+                   putStr " "
+                   printShape' t' indent'
+                 If tOdd tEven -> do
+                   printShape' tOdd indent'
+                   mapM_ (const (putStr " ")) [0..indent-1]
+                   printShape' tEven indent'
+
 main :: IO ()
 main = do
   args <- getArgs
   case args of
     [ "print", depth ] ->
       printTree tree (read depth)
+    [ "shape", depth ] ->
+      printShape tree (read depth)
     [ "percent", depth ] -> do
       let (n, total) = countSuccesses tree (read depth)
       putStrLn ("Successes: " ++ show n)

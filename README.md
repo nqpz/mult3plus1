@@ -26,6 +26,8 @@ Try running `stack run mult3plus1-symbolic` with one of these arguments:
 
   - `print N`: Print the tree.
 
+  - `shape N`: Print the shape of the tree.
+
   - `percent N`: Print the percentage of successes.
 
 Where N is a positive integer denoting search depth.
