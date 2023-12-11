@@ -1,5 +1,7 @@
 module Main where
 
+import System.Environment (getArgs)
+
 data Parity = Odd | Even
 
 data Expression = Expression { expNs :: Integer
@@ -111,4 +113,8 @@ printTree t depth = mapM_ putStrLn $ printTreeLines t depth
              : map ("  " ++) struct
 
 main :: IO ()
-main = printTree tree 5
+main = do
+  args <- getArgs
+  case args of
+    [depth] -> printTree tree (read depth)
+    _ -> return ()
