@@ -23,8 +23,8 @@ library:
   source-dirs: src
 
 executables:
-  mult3plus1:
-    main:                mult3plus1.hs
+  mult3plus1-modulo:
+    main:                modulo.hs
     source-dirs:         src
     dependencies:
     - mult3plus1
