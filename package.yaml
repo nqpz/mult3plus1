@@ -25,3 +25,8 @@ executables:
     source-dirs:         src
     dependencies:
     - mult3plus1
+  mult3plus1-symbolic:
+    main:                symbolic.hs
+    source-dirs:         src
+    dependencies:
+    - mult3plus1
