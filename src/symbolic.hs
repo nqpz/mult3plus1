@@ -128,11 +128,10 @@ main :: IO ()
 main = do
   args <- getArgs
   case args of
-    [arg] -> do
-      let depth = read arg
-      printTree tree depth
-      putStrLn "-----"
-      let (n, total) = countSuccesses tree depth
+    [ "print", depth ] ->
+      printTree tree (read depth)
+    [ "percent", depth ] -> do
+      let (n, total) = countSuccesses tree (read depth)
       putStrLn ("Successes: " ++ show n)
       putStrLn ("Total: " ++ show total)
       putStrLn ("Success percentage: " ++ show (100.0 * fromIntegral n / fromIntegral total))

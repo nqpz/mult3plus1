@@ -18,8 +18,14 @@ proven.
 
 ## symbolic
 
-Try running `stack run mult3plus1-symbolic N`, where N is a positive
-integer denoting search depth.  This program will print the tree of what
-infinite subparts need to be proved in order to prove that an integer
-$N > 1$ will always get smaller when run through the calculation of the
-conjecture.
+This program calculates the tree of what infinite subparts need to be
+proved in order to prove that an integer $N > 1$ will always get smaller
+when run through the calculation of the conjecture.
+
+Try running `stack run mult3plus1-symbolic` with one of these arguments:
+
+  - `print N`: Print the tree.
+
+  - `percent N`: Print the percentage of successes.
+
+Where N is a positive integer denoting search depth.
