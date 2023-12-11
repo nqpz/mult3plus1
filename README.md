@@ -1,17 +1,25 @@
 # mult3plus1
 
+I sometimes try to prove [the Collatz
+conjecture](https://en.wikipedia.org/wiki/Collatz_conjecture) by
+programming my way out of it, but have not succeeded yet.
+
+
+## modulo
+
 Try running `stack run mult3plus1-modulo N`, where N is a positive
 integer.  This program will try to find the fraction of all integers
 greater than 1 modulo $2^{N+1}$ that are guaranteed to become smaller
-when run through the calculation of the [the Collatz
-conjecture](https://en.wikipedia.org/wiki/Collatz_conjecture).  The idea
-is that if all these integers can be shown to have this property
-(unlikely), then they will all end up at the integer 1 at the end, and
-the conjecture is proven.
+when run through the calculation of the conjecture.  The idea is that if
+all these integers can be shown to have this property (unlikely), then
+they will all end up at the integer 1 at the end, and the conjecture is
+proven.
 
 
-## Background
+## symbolic
 
-I tried to prove the conjecture in July 2019 by programming my way out
-of it, but I didn't succeed.
-
+Try running `stack run mult3plus1-symbolic N`, where N is a positive
+integer denoting search depth.  This program will print the tree of what
+infinite subparts need to be proved in order to prove that an integer
+$N > 1$ will always get smaller when run through the calculation of the
+conjecture.
