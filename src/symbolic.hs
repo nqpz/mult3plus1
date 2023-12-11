@@ -6,13 +6,22 @@ data Expression = Expression { expNs :: Integer
                              , expK :: Integer
                              }
 
+showExp :: Expression -> Integer -> String
+showExp exp nDividedBy =
+  show (expNs exp) ++ " n / " ++ show nDividedBy ++ " + " ++ show (expK exp)
+
 data Success = BasicSuccess
              | FiniteSuccess { treeK :: Integer
                              , treeNs :: Integer
                              }
-               -- ^ A success if treeK < treeNs * (N / treeNDividedBy).  We
+               -- ^ A success if treeK < treeNs * (n / treeNDividedBy).  We
                -- assume this is a success, since there are only a finite number
                -- of integers to check if the condition does not hold.
+
+showSuccess :: Success -> Integer -> String
+showSuccess BasicSuccess _ = "success"
+showSuccess s nDividedBy =
+  "success if " ++ show (treeK s) ++ " >= " ++ show (treeNs s) ++ " * (n / " ++ show nDividedBy ++ ")"
 
 data TreeStructure = Success Success
                    | IsOdd Tree
@@ -80,5 +89,26 @@ tree = tree' (Expression { expNs = 1, expK = 0 }) 1
                                  , treeEven = tree' (expReplaceEven exp) d'
                                  }
 
+printTree :: Tree -> Integer -> IO ()
+printTree t depth = mapM_ putStrLn $ printTreeLines t depth
+  where printTreeLines :: Tree -> Integer -> [String]
+        printTreeLines _ 0 = [ "MAX DEPTH REACHED" ]
+        printTreeLines t depth =
+          let (status, struct) =
+                let depth' = depth - 1
+                in case treeStruct t of
+                     Success s -> (showSuccess s (treeNDividedBy t), [])
+                     IsOdd t' -> ("is odd", printTreeLines t' depth')
+                     IsEven t' -> ("is even", printTreeLines t' depth')
+                     If tOdd tEven -> ("is odd or even",
+                                       [ "if odd" ]
+                                       ++ printTreeLines tOdd depth'
+                                       ++ [ "-----"
+                                          , "if even" ]
+                                       ++ printTreeLines tEven depth')
+          in ("Expression: " ++ showExp (treeExp t) (treeNDividedBy t))
+             : status
+             : map ("  " ++) struct
+
 main :: IO ()
-main = return ()
+main = printTree tree 5
