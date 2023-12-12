@@ -92,6 +92,24 @@ tree = tree' (Expression { expNs = 1, expK = 0 }) 1
                                  , treeEven = tree' (expReplaceEven exp) d'
                                  }
 
+-- Do a depth-first traversal of the tree and find how many steps it takes to
+-- prove each subpart.
+depthFirstIteration :: [Integer]
+depthFirstIteration = depthFirstIteration' tree 0
+  where depthFirstIteration' :: Tree -> Integer -> [Integer]
+        depthFirstIteration' t depth =
+          let depth' = depth + 1
+          in case treeStruct t of
+            Success _ -> [depth]
+            IsOdd t' -> depthFirstIteration' t' depth'
+            IsEven t' -> depthFirstIteration' t' depth'
+            If tOdd tEven ->
+              -- It's important to iterate on tEven first, as every success must
+              -- include at least one division by 2, which can only happen when
+              -- an integer is even.
+              depthFirstIteration' tEven depth'
+              ++ depthFirstIteration' tOdd depth'
+
 countSuccesses :: Tree -> Integer -> Rational
 countSuccesses _ 0 = 0
 countSuccesses t depth =
@@ -154,4 +172,5 @@ main = do
     [ "shape", depth ] ->
       printShape tree (read depth)
     [ "percent", depth ] -> putStrLn (show (fromRational (100 * countSuccesses tree (read depth))) ++ "%")
+    [ "depthfirst" ] -> mapM_ print depthFirstIteration
     _ -> return ()
