@@ -28,8 +28,7 @@ showSuccess s nDividedBy =
   ++ show (treeNs s) ++ " * (n / " ++ show nDividedBy ++ ")"
 
 data TreeStructure = Success Success
-                   | IsOdd Tree
-                   | IsEven Tree
+                   | Is Parity Tree
                    | If { treeOdd :: Tree
                         , treeEven :: Tree
                         }
@@ -86,8 +85,8 @@ tree = tree' (Expression { expNs = 1, expK = 0 }) 1
             Just success -> Success success
             Nothing ->
               case expParity exp of
-                Just Even -> IsEven (tree' (expDiv2 exp) d)
-                Just Odd -> IsOdd (tree' (expMult3Plus1 exp) d)
+                Just Even -> Is Even (tree' (expDiv2 exp) d)
+                Just Odd -> Is Odd (tree' (expMult3Plus1 exp) d)
                 Nothing -> let d' = d * 2
                            in If { treeOdd = tree' (expReplaceOdd exp) d'
                                  , treeEven = tree' (expReplaceEven exp) d'
@@ -102,8 +101,7 @@ depthFirstIteration = depthFirstIteration' tree 0
           let depth' = depth + 1
           in case treeStruct t of
             Success _ -> [depth]
-            IsOdd t' -> depthFirstIteration' t' depth'
-            IsEven t' -> depthFirstIteration' t' depth'
+            Is _ t' -> depthFirstIteration' t' depth'
             If tOdd tEven ->
               -- It's important to iterate on tEven first, as every success must
               -- include at least one division by 2, which can only happen when
@@ -117,8 +115,7 @@ countSuccesses t depth =
   let depth' = depth - 1
   in case treeStruct t of
     Success _ -> 1
-    IsOdd t' -> countSuccesses t' depth'
-    IsEven t' -> countSuccesses t' depth'
+    Is _ t' -> countSuccesses t' depth'
     If tOdd tEven -> let pOdd = countSuccesses tOdd depth'
                          pEven = countSuccesses tEven depth'
                      in pOdd / 2 + pEven / 2
@@ -132,8 +129,8 @@ printTree t depth = mapM_ putStrLn $ printTreeLines t depth
                 let depth' = depth - 1
                 in case treeStruct t of
                      Success s -> (showSuccess s (treeNDividedBy t), [])
-                     IsOdd t' -> ("is odd", printTreeLines t' depth')
-                     IsEven t' -> ("is even", printTreeLines t' depth')
+                     Is Odd t' -> ("is odd", printTreeLines t' depth')
+                     Is Even t' -> ("is even", printTreeLines t' depth')
                      If tOdd tEven -> ("is odd or even",
                                        [ "if odd" ]
                                        ++ printTreeLines tOdd depth'
@@ -153,10 +150,7 @@ printShape t depth = printShape' t 0
             let indent' = indent + 1
             in case treeStruct t of
                  Success s -> putStrLn "|"
-                 IsOdd t' -> do
-                   putStr " "
-                   printShape' t' indent'
-                 IsEven t' -> do
+                 Is _ t' -> do
                    putStr " "
                    printShape' t' indent'
                  If tOdd tEven -> do
