@@ -36,4 +36,8 @@ Try running `stack run mult3plus1-symbolic` with one of these arguments:
   - `depthfirstdelta`: Same as `depthfirst`, but print the deltas
     between the integers.  All deltas are probably positive.
 
+  - `depthfirstdelta fibratio N`: The ratio of numbers in the delta that
+    are Fibonacci numbers.  Seems pretty high (seems to reach 2 for
+    larger values).
+
 Where N is a positive integer denoting search depth.

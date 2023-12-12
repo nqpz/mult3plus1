@@ -113,6 +113,23 @@ depthFirstIterationDelta :: [Integer]
 depthFirstIterationDelta =
   map (uncurry (-)) $ zip (tail depthFirstIteration) depthFirstIteration
 
+fibs :: [Integer]
+fibs = 0 : 1 : map (uncurry (+)) (zip fibs (tail fibs))
+
+elemInMonotonic :: Integer -> [Integer] -> Bool
+elemInMonotonic n = elem n . takeWhile (<= n)
+
+isFib :: Integer -> Bool
+isFib = (`elemInMonotonic` fibs)
+
+depthFirstIterationDeltaFibs :: [Bool]
+depthFirstIterationDeltaFibs = map isFib depthFirstIterationDelta
+
+boolSplit :: [Bool] -> Rational
+boolSplit bs =
+  let trueLen = length (filter id bs)
+  in (fromIntegral trueLen) % (fromIntegral (length bs - trueLen))
+
 countSuccesses :: Tree -> Integer -> Rational
 countSuccesses _ 0 = 0
 countSuccesses t depth =
@@ -175,4 +192,6 @@ main = do
       in putStrLn (show p ++ "%")
     [ "depthfirst" ] -> mapM_ print depthFirstIteration
     [ "depthfirstdelta" ] -> mapM_ print depthFirstIterationDelta
+    [ "depthfirstdelta", "fibratio", depth ] ->
+      print $ fromRational $ boolSplit $ take (read depth) depthFirstIterationDeltaFibs
     _ -> return ()
