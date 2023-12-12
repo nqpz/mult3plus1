@@ -109,6 +109,10 @@ depthFirstIteration = depthFirstIteration' tree 0
               depthFirstIteration' tEven depth'
               ++ depthFirstIteration' tOdd depth'
 
+depthFirstIterationDelta :: [Integer]
+depthFirstIterationDelta =
+  map (uncurry (-)) $ zip (tail depthFirstIteration) depthFirstIteration
+
 countSuccesses :: Tree -> Integer -> Rational
 countSuccesses _ 0 = 0
 countSuccesses t depth =
@@ -170,4 +174,5 @@ main = do
       let p = fromRational (100 * countSuccesses tree (read depth))
       in putStrLn (show p ++ "%")
     [ "depthfirst" ] -> mapM_ print depthFirstIteration
+    [ "depthfirstdelta" ] -> mapM_ print depthFirstIterationDelta
     _ -> return ()

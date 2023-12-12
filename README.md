@@ -33,4 +33,7 @@ Try running `stack run mult3plus1-symbolic` with one of these arguments:
   - `depthfirst`: Do a depth-first search and print how many steps it
     takes to prove each subpart.
 
+  - `depthfirstdelta`: Same as `depthfirst`, but print the deltas
+    between the integers.  All deltas are probably positive.
+
 Where N is a positive integer denoting search depth.
