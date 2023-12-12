@@ -1,5 +1,6 @@
 module Main where
 
+import Data.Ratio ((%))
 import System.Environment (getArgs)
 
 data Parity = Odd | Even
@@ -91,17 +92,17 @@ tree = tree' (Expression { expNs = 1, expK = 0 }) 1
                                  , treeEven = tree' (expReplaceEven exp) d'
                                  }
 
-countSuccesses :: Tree -> Integer -> (Integer, Integer)
-countSuccesses _ 0 = (0, 1)
+countSuccesses :: Tree -> Integer -> Rational
+countSuccesses _ 0 = 0
 countSuccesses t depth =
   let depth' = depth - 1
   in case treeStruct t of
-    Success _ -> (1, 1)
+    Success _ -> 1
     IsOdd t' -> countSuccesses t' depth'
     IsEven t' -> countSuccesses t' depth'
-    If tOdd tEven -> let (nOdd, totalOdd) = countSuccesses tOdd depth'
-                         (nEven, totalEven) = countSuccesses tEven depth'
-                     in (nOdd + nEven, totalOdd + totalEven)
+    If tOdd tEven -> let pOdd = countSuccesses tOdd depth'
+                         pEven = countSuccesses tEven depth'
+                     in pOdd / 2 + pEven / 2
 
 printTree :: Tree -> Integer -> IO ()
 printTree t depth = mapM_ putStrLn $ printTreeLines t depth
@@ -152,9 +153,5 @@ main = do
       printTree tree (read depth)
     [ "shape", depth ] ->
       printShape tree (read depth)
-    [ "percent", depth ] -> do
-      let (n, total) = countSuccesses tree (read depth)
-      putStrLn ("Successes: " ++ show n)
-      putStrLn ("Total: " ++ show total)
-      putStrLn ("Success percentage: " ++ show (100.0 * fromIntegral n / fromIntegral total))
+    [ "percent", depth ] -> putStrLn (show (fromRational (100 * countSuccesses tree (read depth))) ++ "%")
     _ -> return ()
