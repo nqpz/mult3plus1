@@ -24,7 +24,8 @@ data Success = BasicSuccess
 showSuccess :: Success -> Integer -> String
 showSuccess BasicSuccess _ = "success"
 showSuccess s nDividedBy =
-  "success if " ++ show (treeK s) ++ " >= " ++ show (treeNs s) ++ " * (n / " ++ show nDividedBy ++ ")"
+  "success if " ++ show (treeK s) ++ " >= "
+  ++ show (treeNs s) ++ " * (n / " ++ show nDividedBy ++ ")"
 
 data TreeStructure = Success Success
                    | IsOdd Tree
@@ -171,6 +172,8 @@ main = do
       printTree tree (read depth)
     [ "shape", depth ] ->
       printShape tree (read depth)
-    [ "percent", depth ] -> putStrLn (show (fromRational (100 * countSuccesses tree (read depth))) ++ "%")
+    [ "percent", depth ] ->
+      let p = fromRational (100 * countSuccesses tree (read depth))
+      in putStrLn (show p ++ "%")
     [ "depthfirst" ] -> mapM_ print depthFirstIteration
     _ -> return ()
