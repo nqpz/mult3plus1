@@ -1,9 +1,24 @@
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE LambdaCase #-}
 module Main where
 
+import Data.Function ((&))
 import Data.Ratio ((%))
 import System.Environment (getArgs)
+import Data.Graph.Inductive.Graph (Node, mkGraph)
+import Data.Graph.Inductive.PatriciaTree
+import Data.GraphViz
+import qualified Data.GraphViz.Attributes.Complete as GraphViz
+import qualified Data.Text.Lazy as T
+import qualified Data.Text.Lazy.IO as T
 
 data Parity = Odd | Even
+
+showParity :: Parity -> String
+showParity = \case
+  Odd -> "odd"
+  Even -> "even"
 
 data Expression = Expression { expNs :: Integer
                              , expK :: Integer
@@ -179,6 +194,30 @@ printShape t depth = printShape' t 0
                    mapM_ (const (putStr " ")) [0..indent-1]
                    printShape' tEven indent'
 
+type NodeLabel = T.Text
+type EdgeLabel = ()
+
+toGraph :: Tree -> Integer -> Gr NodeLabel EdgeLabel
+toGraph t depth =
+  let (nodes, edges, _) = toGraph' t depth 0 0
+      edges' = map (\(from, to) -> (from, to, ())) edges
+  in mkGraph ((0, "") : nodes) edges'
+  where toGraph' :: Tree -> Integer -> Int -> Int -> ([(Node, T.Text)], [(Node, Node)], Int)
+        toGraph' _ 0 _ i = ([], [], i)
+        toGraph' t depth parent i =
+          let depth' = depth - 1
+              i' = i + 1
+          in case treeStruct t of
+            Success _ ->
+              ([(i', "success")], [(parent, i')], i')
+            Is parity t' ->
+              let (nodes, edges, i'') = toGraph' t' depth' i' i'
+              in ((i', T.pack (showParity parity)) : nodes, (parent, i') : edges, i'')
+            If tOdd tEven ->
+              let (nodesEven, edgesEven, i'') = toGraph' tEven depth' i' i'
+                  (nodesOdd, edgesOdd, i''') = toGraph' tOdd depth' i' i''
+              in ((i', "even/odd") : nodesEven ++ nodesOdd, (i, i') : edgesEven ++ edgesOdd, i''')
+
 main :: IO ()
 main = do
   args <- getArgs
@@ -194,4 +233,9 @@ main = do
     [ "depthfirstdelta" ] -> mapM_ print depthFirstIterationDelta
     [ "depthfirstdelta", "fibratio", depth ] ->
       print $ fromRational $ boolSplit $ take (read depth) depthFirstIterationDeltaFibs
+    [ "graph", depth ] ->
+      toGraph tree (read depth)
+      & graphToDot nonClusteredParams { fmtNode = \(n, l) -> [GraphViz.Label (GraphViz.StrLabel l)] }
+      & printDotGraph
+      & T.putStr
     _ -> return ()
