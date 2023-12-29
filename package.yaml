@@ -15,9 +15,11 @@ description:         Please see the README on GitHub at <https://github.com/nqpz
 
 dependencies:
 - base >= 4.7 && < 5
+- random >= 1.2
 - fgl >= 5.8
 - graphviz >= 2999.20
 - text >= 2.0
+- array >= 0.5
 
 library:
   source-dirs: src
@@ -25,11 +27,11 @@ library:
 executables:
   mult3plus1-modulo:
     main:                modulo.hs
-    source-dirs:         src
+    source-dirs:         app
     dependencies:
     - mult3plus1
   mult3plus1-symbolic:
     main:                symbolic.hs
-    source-dirs:         src
+    source-dirs:         app
     dependencies:
     - mult3plus1
