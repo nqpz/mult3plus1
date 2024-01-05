@@ -24,11 +24,11 @@ when run through the calculation of the conjecture.
 
 Try running `stack run mult3plus1-symbolic` with one of these arguments:
 
-  - `print N`: Print the tree.
+  - `graph N`: Print the tree as a GraphViz dot graph.
 
-  - `shape N`: Print the shape of the tree.
+  - `successrate N`: Print the percentage of successes.
 
-  - `percent N`: Print the percentage of successes.
+  - `averagebranchingfactor N`: Print the average branching factor.
 
   - `depthfirst`: Do a depth-first search and print how many steps it
     takes to prove each subpart.
@@ -39,7 +39,5 @@ Try running `stack run mult3plus1-symbolic` with one of these arguments:
   - `depthfirstdelta fibratio N`: The ratio of numbers in the delta that
     are Fibonacci numbers.  Seems pretty high (seems to reach 2 for
     larger values).
-    
-  - `graph N`: Print the tree as a GraphViz dot graph.
 
-Where N is a positive integer denoting search depth.
+Where $N$ is a positive integer denoting search depth.
