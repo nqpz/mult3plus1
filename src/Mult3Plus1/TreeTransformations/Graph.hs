@@ -37,7 +37,7 @@ toGraph t =
             Node s (t0 LNE.:| [t1]) ->
               let (nodes0, edges0, i'') = toGraph' t0 i' i'
                   (nodes1, edges1, i''') = toGraph' t1 i' i''
-              in ((i', T.fromStrict (format s)) : nodes0 ++ nodes1, (i, i') : edges0 ++ edges1, i''')
+              in ((i', T.fromStrict (format s)) : nodes0 ++ nodes1, (parent, i') : edges0 ++ edges1, i''')
 
 toGraphViz :: (WillReachEnd state end,
                ExpanderFormatter state,
