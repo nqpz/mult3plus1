@@ -11,6 +11,7 @@ import Mult3Plus1.TreeTransformations.ShapeFormatter (formatShape)
 
 import System.Environment (getArgs)
 import qualified Data.Text.Lazy.IO as T
+import Control.Monad (forM_)
 
 ctree = tree collatzProof
 
@@ -34,9 +35,13 @@ main = do
     [ "depthfirstdelta" ] ->
       mapM_ print (Utils.depthFirstIterationDelta ctree)
     [ "depthfirstdelta", "fibratio", depth ] ->
-      print
-      $ fromRational
-      $ Utils.boolSplit
-      $ take (read depth) (Utils.depthFirstIterationDeltaFibs ctree)
+      print $ Utils.depthFirstIterationDeltaFibs ctree (read depth)
+    [ "depthfirstdelta", "fibratio", "comparerandom", seed ] ->
+      let rtree = tree (randomExpander (read seed))
+          p t d = print $ Utils.depthFirstIterationDeltaFibs t d
+      in forM_ [1..20] $ \depth -> do
+        print depth
+        p ctree depth
+        p rtree depth
     _ ->
       pure ()

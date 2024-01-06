@@ -5,12 +5,12 @@ module Mult3Plus1.TreeTransformations.Utils
   , depthFirstIteration
   , depthFirstIterationDelta
   , depthFirstIterationDeltaFibs
-  , boolSplit
   ) where
 
 import Mult3Plus1.Tree (Tree(..), SubTree)
 
 import Data.Ratio ((%))
+import Data.Function ((&))
 import qualified Data.List.NonEmpty as LNE
 
 countSuccessRate :: SubTree state end -> Rational
@@ -58,10 +58,13 @@ depthFirstIterationDelta :: Tree state end -> [Integer]
 depthFirstIterationDelta tree =
   map (uncurry (-)) $ zip (tail (depthFirstIteration tree)) (depthFirstIteration tree)
 
-depthFirstIterationDeltaFibs :: Tree state end -> [Bool]
-depthFirstIterationDeltaFibs tree = map isFib (depthFirstIterationDelta tree)
+depthFirstIterationDeltaFibs :: Tree state end -> Int -> (Int, Int)
+depthFirstIterationDeltaFibs tree chunkSize =
+  map isFib (depthFirstIterationDelta tree)
+  & take chunkSize
+  & boolSplit
 
-boolSplit :: [Bool] -> Rational
+boolSplit :: [Bool] -> (Int, Int)
 boolSplit bs =
   let trueLen = length (filter id bs)
-  in (fromIntegral trueLen) % (fromIntegral (length bs - trueLen))
+  in (trueLen, length bs)

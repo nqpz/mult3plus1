@@ -40,4 +40,8 @@ Try running `stack run mult3plus1-symbolic` with one of these arguments:
     are Fibonacci numbers.  Seems pretty high (seems to reach 2 for
     larger values).
 
+  - `depthfirstdelta fibratio comparerandom SEED`: Run `fibratio` on
+    both the Collatz proof tree and on a random tree to compare the
+    two ratios.
+
 Where $N$ is a positive integer denoting search depth.

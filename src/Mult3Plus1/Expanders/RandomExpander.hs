@@ -16,25 +16,30 @@ data Witness = Witness StdGen
 data State = State StdGen
   deriving (Show)
 
-data End
+data End = End
   deriving (Show)
 
 instance ExpanderInit Witness State End where
   initial (Witness gen) = Left $ State gen
 
+data Action = Branch | Continue | Stop
+  deriving (Enum)
+
 instance ExpanderNext State End where
   next (State gen) =
-    let (branch, gen') = uniformR (False, True) gen
-    in Left $ if branch
-              then let (gen'', gen''') = split gen'
-                   in State gen'' LNE.:| [State gen''']
-              else State gen' LNE.:| []
+    let (actionI, gen') = uniformR (0, 2) gen
+    in case toEnum actionI of
+      Branch ->
+        let (gen'', gen''') = split gen'
+        in Left $ State gen'' LNE.:| [State gen''']
+      Continue -> Left $ State gen' LNE.:| []
+      Stop -> Right End
 
 instance ExpanderFormatter State where
   format = const T.empty
 
 instance ExpanderFormatter End where
-  format = undefined -- impossible
+  format = const T.empty
 
 instance WitnessForExpander Witness State End
 
