@@ -27,7 +27,7 @@ data Action = Branch | Continue | Stop
 
 instance ExpanderNext State End where
   next (State gen) =
-    let (actionI, gen') = uniformR (0, 2) gen
+    let (actionI, gen') = uniformR (0, 2) gen -- FIXME: Make it possible to adjust the odds of each action.
     in case toEnum actionI of
       Branch ->
         let (gen'', gen''') = split gen'
