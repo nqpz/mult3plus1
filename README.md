@@ -11,7 +11,7 @@ This program calculates the tree of what infinite subparts need to be
 proved in order to prove that an integer $N > 1$ will always get smaller
 when run through the calculation of the conjecture.
 
-Try running `stack run mult3plus1-symbolic` with one of these arguments:
+Try running `stack exec mult3plus1-symbolic` with one of these arguments:
 
   - `graph N`: Print the tree as a GraphViz dot graph.
 
@@ -38,7 +38,7 @@ Where $N$ is a positive integer denoting search depth.
 
 ## modulo
 
-Try running `stack run mult3plus1-modulo N`, where N is a positive
+Try running `stack exec mult3plus1-modulo N`, where N is a positive
 integer.  This program will try to find the fraction of all integers
 greater than 1 modulo $2^{N+1}$ that are guaranteed to become smaller
 when run through the calculation of the conjecture.  The idea is that if
